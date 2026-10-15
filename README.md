@@ -68,11 +68,15 @@ Set up the site and space, built the four support forms with their intake fields
 
 ## Screenshots
 
+**Customer portal: complaint intake form** (with mandatory vulnerable-customer flag)
+
+![Complaint intake form](screenshots/01-complaint-intake-form.png)
+
 **Forms routed to their work types**
 
 ![Forms routed to their work types](screenshots/02-forms-routing.png)
 
-Still to come: customer portal, queue with SLA timers, complaint workflow, a completed complaint ticket.
+Still to come: queue with SLA timers, complaint workflow, a completed complaint ticket.
 
 ## Tools
 
