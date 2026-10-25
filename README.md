@@ -16,36 +16,53 @@ A payments company gets very different contacts through one front door: quick qu
 
 | Request type | Fields |
 |---|---|
-| General enquiry | Summary, Description, Account email |
+| General enquiry | Summary, Description |
 | Technical issue | Summary, Platform (Web / iOS / Android / Card terminal), Error message, Steps to reproduce |
 | Refund / payment dispute | Summary, Transaction ID, Amount, Transaction date, Reason (Not received / Duplicate / Unauthorised / Wrong amount) |
-| Complaint | Summary, Description, Product, Date of issue, Outcome wanted, Vulnerable customer (checkbox) |
+| Complaint | Summary, Description, Product (Card payments / Account / Transfers / Card terminal / Other), Date of issue, Outcome wanted, Vulnerable customer (required) |
 
 ### Workflows
 
-- **Complaint:** Received → Acknowledged → Investigation → Final Response Sent → Closed
-- **Technical issue:** Open → Triage → Escalated to Tech → Waiting for Customer → Resolved
-- General enquiry and Refund / dispute use the default workflow.
+- **Complaint** has its own workflow: Open → Acknowledged → In Progress → Final Response Sent → Done, with Waiting for customer and Escalated available along the way.
+- **Technical issue, Refund / payment dispute and General enquiry** use the default service workflow: Open → In Progress → Waiting for customer / Escalated → Done.
 
 ### SLA targets
 
 | Request type | Target |
 |---|---|
-| Complaint | Acknowledge within 3 business days; final response within 15 business days (PSD2) |
+| Complaint | Acknowledge within 3 days; final response within 21 calendar days (15 business days, PSD2) |
 | Technical issue | First response within 4 hours |
-| Refund / dispute | First response within 1 business day |
+| Refund / dispute | First response within 24 hours |
 | General enquiry | First response within 8 hours |
 
 ### Queues
 
-- Complaints – breaching soon
-- Escalated to tech
-- Refunds awaiting evidence
-- Unassigned
+- **Complaints – breaching soon:** complaints close to an SLA breach. Empty means nothing is at risk.
+- **Escalated to Tech:** technical issues handed to engineering.
+- **Refunds awaiting evidence:** disputes waiting on the customer.
+- Plus the default All open, Assigned to me and Unassigned queues.
 
 ### Automation
 
-- On Complaint creation: automatic acknowledgement comment to the customer.
+**Complaint – automatic acknowledgement**
+- Trigger: work item created
+- Condition: issue type equals Complaint
+- Action: comment to the customer confirming receipt, their reference number and the 15-business-day final response commitment, using smart values for the customer's name and ticket key
+
+## Testing
+
+12 test tickets submitted through the customer portal (3 of each request type) and worked through the queue as an agent would:
+
+- One complaint taken end to end: acknowledged automatically, investigated, final response sent with ombudsman referral rights, closed with both SLAs met.
+- One vulnerable-customer complaint (wages frozen, rent due) set to Highest priority with an internal escalation note.
+- A technical issue escalated to engineering, a refund dispute moved to Waiting for customer pending evidence, and three general enquiries answered and resolved.
+- The remaining tickets left open so their SLA timers stay live.
+
+## What I learned
+
+- **Test with real submissions.** The Product dropdown had no options configured, which only showed up when submitting a test complaint. Options for a select field are set in the field's context in Jira admin, not in the form.
+- **Calendars matter for regulatory SLAs.** This site only has a 24/7 calendar, so business-day deadlines are set as calendar-day equivalents. In production I'd use a business-hours calendar.
+- **Known issue:** the Done status doesn't set a resolution, so closed complaints still appear in the All open queue. The fix is a resolution on the Done transition.
 
 ## Status
 
@@ -53,18 +70,20 @@ A payments company gets very different contacts through one front door: quick qu
 - [x] Four customer-facing support forms built
 - [x] Custom work types created (Complaint, Technical issue, Refund / payment dispute) and added to the space
 - [x] Forms linked to their work types
-- [x] New work types moved onto the main workflow
-- [ ] Custom Complaint and Technical issue workflows
-- [ ] SLA timers
-- [ ] Queues
-- [ ] Automation rule
-- [ ] 12 test tickets submitted through the customer portal and worked through the queue
-- [ ] Screenshots
+- [x] Custom Complaint workflow
+- [x] SLA timers
+- [x] Queues
+- [x] Automation rule
+- [x] 12 test tickets submitted through the customer portal and worked through the queue
+- [x] Screenshots
 
 ## Build log
 
-### Week 1 (8–15 Oct 2026) — logged when this repo was created
-Set up the site and space, built the four support forms with their intake fields, created the three custom work types at site level, added them to the space and linked each form to its work type. Moved the new work types off the default read-only workflow onto the main workflow, ready for the custom Complaint and Technical issue workflows.
+### Week 1 (8–15 Oct 2026)
+Set up the site and space, built the four support forms with their intake fields, created the three custom work types at site level, added them to the space and linked each form to its work type. Moved the new work types onto the main workflow, built the custom Complaint workflow, configured the four SLA targets and created three queues filtered with JQL.
+
+### 25 Oct 2026
+Built the Complaint acknowledgement automation. Added the missing Product dropdown options after a test submission exposed them. Submitted 12 test tickets through the portal, worked them through the queue (closed complaint, vulnerable-customer escalation, tech escalation, refund awaiting evidence, resolved enquiries) and took screenshots.
 
 ## Screenshots
 
@@ -76,7 +95,25 @@ Set up the site and space, built the four support forms with their intake fields
 
 ![Forms routed to their work types](screenshots/02-forms-routing.png)
 
-Still to come: queue with SLA timers, complaint workflow, a completed complaint ticket.
+**All open queue**
+
+![All open queue](screenshots/03-all-open-queue.png)
+
+**SLA timers and automatic acknowledgement on a new complaint**
+
+![SLA timers](screenshots/04-complaint-sla-timers.png)
+
+**Complaint workflow**
+
+![Complaint workflow](screenshots/05-complaint-workflow.png)
+
+**Acknowledgement automation rule**
+
+![Automation rule](screenshots/06-automation-rule.png)
+
+**Completed complaint: final response sent, both SLAs met**
+
+![Completed complaint](screenshots/07-completed-complaint.png)
 
 ## Tools
 
