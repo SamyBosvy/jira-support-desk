@@ -6,6 +6,8 @@ It's modelled on the EU/UK complaints process I ran as Complaints Manager at Squ
 
 > Northwind Payments is an invented brand. All tickets and customers are fictional.
 
+**New: [Zendesk AI layer](zendesk-ai/README.md).** The same desk rebuilt on Zendesk with a customer-facing AI agent, AI triage and routing, and an agent copilot that follows a written procedure.
+
 ## The business problem
 
 A payments company gets very different contacts through one front door: quick questions, technical faults, payment disputes and formal complaints. They need different fields, different routes and different deadlines. Complaints in particular carry regulatory deadlines (PSD2: final response within 15 business days for payment complaints). This desk separates them at intake so each one follows the right process and is tracked against the right clock.
@@ -118,3 +120,5 @@ Built the Complaint acknowledgement automation. Added the missing Product dropdo
 ## Tools
 
 Atlassian Customer Service Management (Jira Service Management family), Free plan.
+
+Zendesk Suite Professional (trial) for the [Zendesk AI layer](zendesk-ai/README.md).
